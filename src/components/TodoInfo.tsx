@@ -17,11 +17,6 @@ export const TodoInfo: React.FC<Props> = React.memo(
   }) => {
   console.log('TodoInfo', todo.id);
 
-  const {
-    selectedUserId,
-    newTodoTitle,
-  } = useContext(AppContext)
-
   return (
     <div>
       {todo.user?.name}
@@ -37,12 +32,7 @@ export const TodoInfo: React.FC<Props> = React.memo(
       </button>
 
       <button onClick={() => {
-        onUpdate({
-          ...todo, 
-          userId: selectedUserId, 
-          title: newTodoTitle, 
-          user: getUser(selectedUserId),
-        })
+        onUpdate(todo)
       }}>
         Edit
       </button>

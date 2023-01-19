@@ -1,9 +1,10 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useContext, useEffect } from 'react';
 import { useState } from 'react';
 import { DebounceInput } from 'react-debounce-input';
 import './App.scss';
 import { getUser, TodoForm } from './components/TodoForm';
 import { TodoList } from './components/TodoList';
+import { AppContext } from './context/AppProvider';
 import { Todo, TodoWithoutUser } from './types/Todo';
 
 const todosFromServer: TodoWithoutUser[] = [
@@ -40,6 +41,11 @@ export const App: React.FC = () => {
   const [visibleTodos, setVisibleTodos] = useState(todos)
   const [query, setQuery] = useState('');
 
+  const {
+    newTodoTitle,
+    selectedUserId,
+  } = useContext(AppContext)
+
   console.log(oldTodos, todos, oldTodos === todos);
   oldTodos = todos;
   
@@ -49,7 +55,7 @@ export const App: React.FC = () => {
 
   const deleteTodo = useCallback(
     (todoToDelete: Todo) => {
-      setTodos(visibleTodos.filter(
+      setTodos((prevState) => prevState.filter(
         todo => todo.id !== todoToDelete.id,
       ));
     },
@@ -59,19 +65,26 @@ export const App: React.FC = () => {
 
   useEffect(() => {
     setVisibleTodos(todos.filter((todo => todo.title.includes(query))));
-  }, [query,])
+  }, [query, todos])
 
   console.log(oldDelete, deleteTodo, oldDelete === deleteTodo);
   oldDelete = deleteTodo;
   
 
-  function updateTodo(updatedTodo: Todo) {
-    setTodos(visibleTodos.map(todo => {
+  const updateTodo = (updatedTodo: Todo) => {
+    const updtodo = {
+      userId: selectedUserId,
+      title: newTodoTitle,
+      user: getUser(selectedUserId),
+      id: updatedTodo.id,
+      completed: updatedTodo.completed
+    }
+    setTodos((prevState) => prevState.map(todo => {
       if (todo.id !== updatedTodo.id) {
         return todo;
       }
 
-      return updatedTodo;
+      return updtodo;
     }));
   }
 
