@@ -76,7 +76,9 @@ export function App() {
         value={query}
         onChange={event => setQuery(event.target.value)}
       />
-      <TodoForm onSubmit={addTodo} />
+      <TodoForm 
+        onSubmit={addTodo} 
+      />
       <TodoList
         todos={todos}
         onTodoDeleted={deleteTodo}
