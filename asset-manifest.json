@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/new-react_js-oct22/static/css/main.1d766016.css",
+    "main.js": "/new-react_js-oct22/static/js/main.943df944.js",
+    "index.html": "/new-react_js-oct22/index.html",
+    "main.1d766016.css.map": "/new-react_js-oct22/static/css/main.1d766016.css.map",
+    "main.943df944.js.map": "/new-react_js-oct22/static/js/main.943df944.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.1d766016.css",
+    "static/js/main.943df944.js"
+  ]
+}
