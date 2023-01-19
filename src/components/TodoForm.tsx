@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useContext, useEffect } from 'react';
+import { AppContext } from '../context/AppProvider';
 import { Todo } from '../types/Todo';
 import { User } from '../types/User';
 
@@ -75,9 +76,22 @@ type Props = {
   todo?: Todo,
 }
 
-export const TodoForm: React.FC<Props> = ({ onSubmit, todo }) => {
-  const [newTodoTitle, setNewTodoTitle] = useState(todo?.title || '');
-  const [selectedUserId, setSelectedUserId] = useState(todo?.userId || 0);
+export const TodoForm: React.FC<Props> = ({ 
+  onSubmit, 
+  todo,
+}) => {
+
+  const {
+    newTodoTitle,
+    setNewTodoTitle,
+    selectedUserId,
+    setSelectedUserId,
+  } = useContext(AppContext)
+
+  useEffect(() => {
+    setNewTodoTitle(todo?.title || '')
+    setSelectedUserId(todo?.userId || 0)
+  }, [setNewTodoTitle, setSelectedUserId, todo?.title, todo?.userId])
 
   return (
     <form

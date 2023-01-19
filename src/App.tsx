@@ -1,5 +1,6 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useState } from 'react';
+import { DebounceInput } from 'react-debounce-input';
 import './App.scss';
 import { getUser, TodoForm } from './components/TodoForm';
 import { TodoList } from './components/TodoList';
@@ -29,13 +30,14 @@ const todosFromServer: TodoWithoutUser[] = [
 let oldTodos: Todo[] = [];
 let oldDelete: (todo: Todo) => void = () => {};
 
-export function App() {
+export const App: React.FC = () => {
   const [todos, setTodos] = useState<Todo[]>(() => {
     return todosFromServer.map(todo => ({
       ...todo,
       user: getUser(todo.userId),
     }))
   });
+  const [visibleTodos, setVisibleTodos] = useState(todos)
   const [query, setQuery] = useState('');
 
   console.log(oldTodos, todos, oldTodos === todos);
@@ -47,7 +49,7 @@ export function App() {
 
   const deleteTodo = useCallback(
     (todoToDelete: Todo) => {
-      setTodos(todos.filter(
+      setTodos(visibleTodos.filter(
         todo => todo.id !== todoToDelete.id,
       ));
     },
@@ -55,23 +57,28 @@ export function App() {
     [todos],
   );
 
+  useEffect(() => {
+    setVisibleTodos(todos.filter((todo => todo.title.includes(query))));
+  }, [query,])
+
   console.log(oldDelete, deleteTodo, oldDelete === deleteTodo);
   oldDelete = deleteTodo;
   
 
-  // function updateTodo(updatedTodo: Todo) {
-  //   setTodos(todos.map(todo => {
-  //     if (todo.id !== updatedTodo.id) {
-  //       return todo;
-  //     }
+  function updateTodo(updatedTodo: Todo) {
+    setTodos(visibleTodos.map(todo => {
+      if (todo.id !== updatedTodo.id) {
+        return todo;
+      }
 
-  //     return updatedTodo;
-  //   }));
-  // }
+      return updatedTodo;
+    }));
+  }
 
   return (
     <div className="App">
-      <input
+      <DebounceInput
+        debounceTimeout={300}
         type="text"
         value={query}
         onChange={event => setQuery(event.target.value)}
@@ -80,7 +87,8 @@ export function App() {
         onSubmit={addTodo} 
       />
       <TodoList
-        todos={todos}
+        todos={visibleTodos}
+        updateTodo={updateTodo}
         onTodoDeleted={deleteTodo}
       />
     </div>

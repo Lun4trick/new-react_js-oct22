@@ -1,14 +1,26 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { AppContext } from '../context/AppProvider';
 import { Todo } from '../types/Todo';
+import { getUser } from './TodoForm';
 
 type Props = {
   todo: Todo;
   onDelete: (todo: Todo) => void;
+  onUpdate: (todo: Todo) => void;
 };
 
 export const TodoInfo: React.FC<Props> = React.memo(  
-  ({ todo, onDelete }) => {
+  ({ 
+    todo, 
+    onDelete,
+    onUpdate,
+  }) => {
   console.log('TodoInfo', todo.id);
+
+  const {
+    selectedUserId,
+    newTodoTitle,
+  } = useContext(AppContext)
 
   return (
     <div>
@@ -24,7 +36,14 @@ export const TodoInfo: React.FC<Props> = React.memo(
         x
       </button>
 
-      <button onClick={() => {}}>
+      <button onClick={() => {
+        onUpdate({
+          ...todo, 
+          userId: selectedUserId, 
+          title: newTodoTitle, 
+          user: getUser(selectedUserId),
+        })
+      }}>
         Edit
       </button>
     </div>
